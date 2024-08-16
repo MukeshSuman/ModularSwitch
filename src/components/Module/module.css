@@ -1,0 +1,11 @@
+.module {
+    height: 226px;
+    width: 226px;
+    background: #fff;
+    border: 1px solid;
+    position: relative;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}

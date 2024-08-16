@@ -1,0 +1,11 @@
+.modular-container {
+  /* display: flex; */
+}
+
+.modular-switch-box {
+  display: flex;
+  background: red;
+  align-items: center;
+  justify-content: center;
+}
+

@@ -1,0 +1,90 @@
+.o {
+  background-color: #1a1a1a; /* Dark background color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  position: relative;
+  width: 226px; /* Total width */
+  height: 226px; /* Total height */
+}
+
+.center-elements {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translate(-50%, -50%);
+}
+
+.line {
+  position: absolute;
+  width: 50px;
+  height: 2px;
+  background-color: #00e4ff; /* Cyan color */
+  transform-origin: center center;
+}
+
+.diagonal-1 {
+  transform: rotate(0deg);
+}
+
+.diagonal-2 {
+  transform: rotate(120deg);
+}
+
+.diagonal-3 {
+  transform: rotate(240deg);
+}
+
+/* .circle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: #00e4ff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid #00e4ff; /* Cyan color */
+}
+
+.arrow-up {
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.arrow-down {
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.dots {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.dot {
+  width: 4px;
+  height: 4px;
+  background-color: #00e4ff;
+  border-radius: 50%;
+}
