@@ -1,0 +1,52 @@
+.ts-container {
+  position: relative;
+  width: 226px;
+  /* Adjusted to fit squares properly */
+  height: 226px;
+}
+
+.ts-square {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #ccc;
+  /* Cyan border color */
+  border-radius: 12px;
+  /* Rounded corners */
+  background-color: transparent;
+  position: absolute;
+}
+
+.ts-tl {
+  top: 20px;
+  left: 20px;
+}
+
+.ts-tr {
+  top: 20px;
+  right: 20px;
+}
+
+.ts-bl {
+  bottom: 20px;
+  left: 20px;
+}
+
+.ts-br {
+  bottom: 20px;
+  right: 20px;
+}
+
+
+.ts-on {
+  border-color: #00e4ff !important;
+}
+
+.ts-child {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 82px;
+  height: 60px;
+  align-items: center;
+  display: inline-grid;
+}

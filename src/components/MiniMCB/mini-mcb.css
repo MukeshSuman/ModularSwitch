@@ -1,0 +1,64 @@
+.mini-mcb-switch-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    position: relative;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    height: 80%;
+}
+
+.mini-mcb-branding {
+    margin-bottom: 10px;
+}
+
+.mini-mcb-brand-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.mini-mcb-brand-model {
+    font-size: 12px;
+    margin-top: -5px;
+}
+
+.mini-mcb-switch {
+    width: 60px;
+    height: 60px;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px auto;
+    border-radius: 3px;
+    position: relative;
+}
+
+.mini-mcb-switch-label {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.mini-mcb-indicator {
+    margin-bottom: 10px;
+}
+
+.mini-mcb-circle {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    margin: 0 auto 5px auto;
+}
+
+.mini-mcb-arrow {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.mini-mcb-model-number {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+}

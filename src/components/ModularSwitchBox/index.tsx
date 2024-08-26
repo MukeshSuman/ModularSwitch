@@ -3,10 +3,15 @@ import Module from "../Module";
 import Socket from "../Socket";
 import Switch from "../Switch";
 import TouchFan from "../TouchFan";
-import TouchSwitch from "../TouchSwitch";
+import Touch4Switch from "../Touch4Switch";
 import Touch2Switch from "../Touch2Switch";
+import Switch2 from "../Switch2";
+import MiniMCB from "../MiniMCB";
+
+
 
 import "./modular-switch-box.css";
+import Indicator from "../Indicator";
 
 type ModularSwitchBoxrops = {
   children?: React.ReactNode;
@@ -41,7 +46,7 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxrops) => {
     {
       child: [
         {
-          items: ["TouchSwitch"],
+          items: ["Touch4Switch"],
         },
       ],
     },
@@ -55,7 +60,7 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxrops) => {
             {item3 === "Switch" && <Switch />}
             {item3 === "Socket" && <Socket />}
             {item3 === "TouchFan" && <TouchFan />}
-            {item3 === "TouchSwitch" && <TouchSwitch />}
+            {item3 === "Touch4Switch" && <Touch4Switch />}
             {item3 === "Touch2Switch" && <Touch2Switch />}
           </>
         ))}
@@ -75,13 +80,14 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxrops) => {
     <div className="modular-container">
       <div className="modular-switch-box">
         <Module>
-          <TouchSwitch />
+          <MiniMCB />
+          <Indicator />
         </Module>
         <Module>
           <Touch2Switch />
         </Module>
         <Module>
-          <TouchSwitch />
+          <Touch4Switch label="Ceiling Lights" />
         </Module>
       </div>
       <div className="modular-switch-box">
