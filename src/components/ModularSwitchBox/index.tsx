@@ -12,6 +12,8 @@ import MiniMCB from "../MiniMCB";
 
 import "./modular-switch-box.css";
 import Indicator from "../Indicator";
+import Grid from "../Grid";
+import TailwindModalBoxSystem from "../Text";
 
 type ModularSwitchBoxrops = {
   children?: React.ReactNode;
@@ -78,7 +80,8 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxrops) => {
 
   return (
     <div className="modular-container">
-      <div className="modular-switch-box">
+      {/* <Grid /> */}
+      {/* <div className="modular-switch-box">
         <Module>
           <MiniMCB />
           <Indicator />
@@ -101,7 +104,8 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxrops) => {
         <Module>
           <TouchFan />
         </Module>
-      </div>
+      </div> */}
+      <TailwindModalBoxSystem />
     </div>
   );
 };

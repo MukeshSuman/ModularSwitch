@@ -5,7 +5,106 @@ main {
 body {
   background: #ffdd59;
   /* height: 100vh; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+}
+
+/* src/App.css */
+
+/* #grid, #item-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+#grid {
+  left: 220px;
+  right: 0;
+}
+
+#item-container {
+  width: 200px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+}
+
+.box {
+  position: absolute;
+  width: 226px;
+  height: 226px;
+  border: 1px solid #000;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  overflow: hidden;
 }
+
+.box.full-size .item {
+  width: 226px;
+  height: 226px;
+}
+
+.box.half-size .item {
+  width: 113px;
+  height: 226px;
+}
+
+.item {
+  border: 1px solid #000;
+  background-color: #ddd;
+  cursor: grab;
+  user-select: none;
+  text-align: center;
+  line-height: 226px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.side {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.side:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.side.top { top: -10px; left: 103px; }
+.side.right { right: -10px; top: 103px; }
+.side.bottom { bottom: -10px; left: 103px; }
+.side.left { left: -10px; top: 103px; }
+
+.remove-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.item-label {
+  display: none;
+}
+
+.box.has-item .box-label {
+  display: none;
+}
+
+.box.has-item .item-label {
+  display: block;
+} */
