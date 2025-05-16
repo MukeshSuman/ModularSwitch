@@ -1,16 +1,24 @@
-import React from 'react';
-import './App.css';
-import ElectricalPanel from './components/ElectricalPanel';
+import { BoardProvider } from './context/BoardContext'
+import { Board } from './components/Board'
+import './styles/App.css'
 
-export default function App() {
+function App() {
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>House Wiring Simulation</h1>
-      </header>
-      <main className="app-main">
-        <ElectricalPanel />
-      </main>
-    </div>
-  );
+    <BoardProvider>
+      <div className="min-h-screen bg-gray-100">
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl font-bold text-gray-900">
+              House Wiring Board Simulation
+            </h1>
+          </div>
+        </header>
+        <main>
+          <Board />
+        </main>
+      </div>
+    </BoardProvider>
+  )
 }
+
+export default App 
