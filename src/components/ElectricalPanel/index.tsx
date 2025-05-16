@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
-import Module from "../Module";
-import { modularItems, defaultCircuits, Circuit } from "../../constants";
-import { CircuitState, ComponentState, WiringConnection } from "../../types";
-import "./modular-switch-box.css";
+import React, { useState, useEffect } from 'react';
+import { Circuit, CircuitState, ComponentState, WiringConnection } from '../../types';
+import { modularItems, defaultCircuits } from '../../constants';
+import './electrical-panel.css';
 
-type ModularSwitchBoxProps = {
-  children?: React.ReactNode;
-};
-
-const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
+const ElectricalPanel: React.FC = () => {
   const [circuits, setCircuits] = useState<Circuit[]>(defaultCircuits);
   const [circuitStates, setCircuitStates] = useState<Record<string, CircuitState>>({});
   const [componentStates, setComponentStates] = useState<Record<string, ComponentState>>({});
   const [connections, setConnections] = useState<WiringConnection[]>([]);
+  const [selectedCircuit, setSelectedCircuit] = useState<string | null>(null);
 
   // Initialize circuit states
   useEffect(() => {
@@ -33,10 +29,10 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
         if (component) {
           initialComponentStates[componentId] = {
             id: componentId,
-            type: component.specs.type || '',
+            type: component.specs.type,
             isOn: false,
             current: 0,
-            voltage: component.specs.voltage || 0,
+            voltage: component.specs.voltage,
             power: 0,
             lastUpdated: new Date()
           };
@@ -85,7 +81,7 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
         newStates[componentId] = {
           ...component,
           isOn,
-          current: isOn ? (component.voltage * 0.1) : 0, // Simplified current calculation
+          current: isOn ? (component.voltage * 0.1) : 0,
           power: isOn ? (component.voltage * component.current) : 0,
           lastUpdated: new Date()
         };
@@ -94,34 +90,54 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
     });
   };
 
-  const ModularItem = ({ item }: { item: any }) => {
-    const component = modularItems.find(comp => comp.name === item.items[0]);
-    if (!component) return null;
-
-    const Component = component.component;
-    const state = componentStates[component.id.toString()];
-
-    return (
-      <Module>
-        <Component
-          isOn={state?.isOn || false}
-          onToggle={() => handleComponentToggle(component.id.toString())}
-          specs={component.specs}
-        />
-      </Module>
-    );
+  const handleComponentFault = (componentId: string, isFaulty: boolean) => {
+    setComponentStates(prevStates => {
+      const newStates = { ...prevStates };
+      const component = newStates[componentId];
+      if (component) {
+        newStates[componentId] = {
+          ...component,
+          isFaulty,
+          lastUpdated: new Date()
+        };
+      }
+      return newStates;
+    });
   };
 
-  const ModularBox = ({ item }: { item: any }) => {
-    return item.child.map((child: any, index: number) => (
-      <div key={index} className="modular-switch-box">
-        <ModularItem item={child} />
-      </div>
-    ));
+  const handleAddComponent = (circuitId: string, componentType: string) => {
+    const component = modularItems.find(item => item.name === componentType);
+    if (!component) return;
+
+    setCircuits(prevCircuits => {
+      return prevCircuits.map(circuit => {
+        if (circuit.id === circuitId) {
+          return {
+            ...circuit,
+            components: [...circuit.components, component.id.toString()]
+          };
+        }
+        return circuit;
+      });
+    });
+  };
+
+  const handleRemoveComponent = (circuitId: string, componentId: string) => {
+    setCircuits(prevCircuits => {
+      return prevCircuits.map(circuit => {
+        if (circuit.id === circuitId) {
+          return {
+            ...circuit,
+            components: circuit.components.filter(id => id !== componentId)
+          };
+        }
+        return circuit;
+      });
+    });
   };
 
   return (
-    <div className="modular-container">
+    <div className="electrical-panel">
       <div className="circuit-status">
         {Object.entries(circuitStates).map(([circuitId, state]) => (
           <div key={circuitId} className="circuit-info">
@@ -133,7 +149,7 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
           </div>
         ))}
       </div>
-      <div className="modular-grid">
+      <div className="circuit-grid">
         {circuits.map(circuit => (
           <div key={circuit.id} className="circuit-group">
             <h2>{circuit.name}</h2>
@@ -141,12 +157,41 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
               {circuit.components.map(componentId => {
                 const component = modularItems.find(item => item.id.toString() === componentId);
                 if (!component) return null;
+                const Component = component.component;
+                const state = componentStates[componentId];
+                
                 return (
                   <div key={componentId} className="component-wrapper">
-                    <ModularItem item={{ items: [component.name] }} />
+                    <Component
+                      id={componentId}
+                      isOn={state?.isOn || false}
+                      onToggle={() => handleComponentToggle(componentId)}
+                      specs={component.specs}
+                      label={component.label}
+                      onFault={(isFaulty) => handleComponentFault(componentId, isFaulty)}
+                    />
+                    <button 
+                      className="remove-component"
+                      onClick={() => handleRemoveComponent(circuit.id, componentId)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 );
               })}
+            </div>
+            <div className="add-component">
+              <select 
+                onChange={(e) => handleAddComponent(circuit.id, e.target.value)}
+                value=""
+              >
+                <option value="">Add Component...</option>
+                {modularItems.map(item => (
+                  <option key={item.id} value={item.name}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         ))}
@@ -155,4 +200,4 @@ const ModularSwitchBox = ({ children }: ModularSwitchBoxProps) => {
   );
 };
 
-export default ModularSwitchBox;
+export default ElectricalPanel; 

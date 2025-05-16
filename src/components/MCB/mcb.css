@@ -1,0 +1,131 @@
+.mcb {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mcb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.mcb-header h3 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.mcb-status {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.mcb-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  gap: 0.5rem;
+}
+
+.mcb-switch {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.mcb-lever {
+  width: 1.5rem;
+  height: 2rem;
+  background-color: #6c757d;
+  border-radius: 2px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.mcb-lever.on {
+  background-color: #28a745;
+  transform: rotate(45deg);
+}
+
+.mcb-lever.off {
+  background-color: #dc3545;
+  transform: rotate(-45deg);
+}
+
+.mcb-lever.tripped {
+  background-color: #ffc107;
+  transform: rotate(0deg);
+}
+
+.mcb-specs {
+  font-size: 0.7rem;
+  color: #666;
+  text-align: center;
+}
+
+.mcb-specs p {
+  margin: 0.15rem 0;
+}
+
+.mcb-controls {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+}
+
+.mcb-toggle,
+.mcb-trip {
+  flex: 1;
+  padding: 0.4rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mcb-toggle.on {
+  background-color: #dc3545;
+  color: white;
+}
+
+.mcb-toggle.off {
+  background-color: #28a745;
+  color: white;
+}
+
+.mcb-toggle:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.mcb-trip {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.mcb-trip.tripped {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Component specific styles */
+.mcb-component {
+  border-left: 3px solid #ffc107;
+} 

@@ -1,52 +1,60 @@
 .ts-container {
-  position: relative;
-  width: 226px;
-  /* Adjusted to fit squares properly */
-  height: 226px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ts-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.25rem;
+  padding: 0.5rem;
 }
 
 .ts-square {
-  width: 50px;
-  height: 50px;
-  border: 2px solid #ccc;
-  /* Cyan border color */
-  border-radius: 12px;
-  /* Rounded corners */
-  background-color: transparent;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ts-square:hover {
+  background-color: #e9ecef;
+}
+
+.ts-square.ts-on {
+  background-color: #28a745;
+}
+
+.ts-square.ts-on::after {
+  content: '';
   position: absolute;
-}
-
-.ts-tl {
-  top: 20px;
-  left: 20px;
-}
-
-.ts-tr {
-  top: 20px;
-  right: 20px;
-}
-
-.ts-bl {
-  bottom: 20px;
-  left: 20px;
-}
-
-.ts-br {
-  bottom: 20px;
-  right: 20px;
-}
-
-
-.ts-on {
-  border-color: #00e4ff !important;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
 }
 
 .ts-child {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 82px;
-  height: 60px;
-  align-items: center;
-  display: inline-grid;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+}
+
+/* Component specific styles */
+.touchswitch-component {
+  border-left: 3px solid #6f42c1;
 }

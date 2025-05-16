@@ -1,0 +1,176 @@
+.electrical-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.circuit-status {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.circuit-info {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+}
+
+.circuit-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.circuit-info p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.circuit-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.circuit-group {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.circuit-group h2 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.circuit-components {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.component-wrapper {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.component-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.remove-component {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.component-wrapper:hover .remove-component {
+  opacity: 1;
+}
+
+.add-component {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+}
+
+.add-component select {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.add-component select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Component specific styles */
+.mcb-component {
+  border-left: 3px solid #ffc107;
+}
+
+.socket-component {
+  border-left: 3px solid #17a2b8;
+}
+
+.switch-component {
+  border-left: 3px solid #6f42c1;
+}
+
+.fan-component {
+  border-left: 3px solid #20c997;
+}
+
+.indicator-component {
+  border-left: 3px solid #007bff;
+}
+
+/* Status indicators */
+.status-active {
+  color: #28a745;
+}
+
+.status-inactive {
+  color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .electrical-panel {
+    padding: 1rem;
+  }
+
+  .circuit-status {
+    grid-template-columns: 1fr;
+  }
+
+  .circuit-components {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .circuit-components {
+    grid-template-columns: 1fr;
+  }
+} 

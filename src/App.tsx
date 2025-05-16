@@ -1,13 +1,16 @@
-import "./App.css";
-import ModularSwitchBox from "./components/ModularSwitchBox";
-import Module from "./components/Module";
+import React from 'react';
+import './App.css';
+import ElectricalPanel from './components/ElectricalPanel';
 
 export default function App() {
   return (
-    <main>
-      <ModularSwitchBox>
-        <Module />
-      </ModularSwitchBox>
-    </main>
+    <div className="app">
+      <header className="app-header">
+        <h1>House Wiring Simulation</h1>
+      </header>
+      <main className="app-main">
+        <ElectricalPanel />
+      </main>
+    </div>
   );
 }
