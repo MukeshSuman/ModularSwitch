@@ -16,7 +16,7 @@ export const FanTouchSwitchComponent: React.FC = () => {
     <div
       className="w-full h-full rounded-xl relative shadow-md flex flex-col items-center justify-center gap-3"
       style={{
-        background: "#f9fafb", // soft panel color
+        // background: "#f9fafb", // soft panel color
         color: "#00faff",
       }}
     >

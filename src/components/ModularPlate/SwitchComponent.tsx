@@ -7,7 +7,7 @@ export const SwitchComponent: React.FC = () => {
     <div
       className={`w-[95%] h-[95%] rounded-xl border-2 ${
         isOn ? "" : "border-gray-300"
-      } bg-gradient-to-b from-white to-gray-200 shadow-lg flex items-end justify-center pb-1.5 cursor-pointer transition-all duration-300`}
+      }  to-gray-200 flex items-end justify-center cursor-pointer transition-all duration-300`}
       onClick={() => setIsOn(!isOn)}
     >
       <div

@@ -165,9 +165,9 @@ export default function ModularPlate() {
               key={index}
               className="relative w-[4.4cm] h-[4.5cm] bg-gray-50 border border-gray-300 rounded-xl flex flex-row justify-between"
             >
-              <div className="absolute top-1 left-2 text-xs text-gray-500">
+              {/* <div className="absolute top-1 left-2 text-xs text-gray-500">
                 {index + 1}
-              </div>
+              </div> */}
 
               {slot.full ? (
                 <div

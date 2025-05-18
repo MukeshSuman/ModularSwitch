@@ -14,7 +14,7 @@ export const TouchComponent: React.FC = () => {
   const corners = ["top-left", "top-right", "bottom-left", "bottom-right"];
 
   return (
-    <div className="w-full h-full bg-[#f4f4f4] rounded-xl relative">
+    <div className="w-full h-full rounded-xl relative">
       {corners.map((corner) => (
         <div
           key={corner}
