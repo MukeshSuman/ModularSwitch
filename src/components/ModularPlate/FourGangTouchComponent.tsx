@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const TouchComponent: React.FC = () => {
+export const FourGangTouchComponent: React.FC = () => {
   const [activeCorners, setActiveCorners] = useState<string[]>([]);
 
   const toggleCorner = (corner: string) => {
@@ -18,17 +18,17 @@ export const TouchComponent: React.FC = () => {
       {corners.map((corner) => (
         <div
           key={corner}
-          className={`absolute w-[20px] h-[20px] rounded-full border-[2px] border-gray-500 cursor-pointer 
-            ${corner} ${activeCorners.includes(corner) ? "bg-cyan-400 shadow-[0_0_6px_2px_#00faff]" : "bg-slate-400 border-slate-700"}`}
+          className={`absolute w-[25px] h-[25px] rounded-md border-[2px] border-cyan-500 cursor-pointer 
+            ${corner} ${activeCorners.includes(corner) ? "bg-cyan-400 shadow-[0_0_6px_2px_#00faff]" : ""}`}
           onClick={(e) => {
             e.stopPropagation();
             toggleCorner(corner);
           }}
           style={{
-            ...(corner === "top-left" && { top: "10px", left: "10px" }),
-            ...(corner === "top-right" && { top: "10px", right: "10px" }),
-            ...(corner === "bottom-left" && { bottom: "10px", left: "10px" }),
-            ...(corner === "bottom-right" && { bottom: "10px", right: "10px" }),
+            ...(corner === "top-left" && { top: "15px", left: "15px" }),
+            ...(corner === "top-right" && { top: "15px", right: "15px" }),
+            ...(corner === "bottom-left" && { bottom: "15px", left: "15px" }),
+            ...(corner === "bottom-right" && { bottom: "15px", right: "15px" }),
           }}
         ></div>
       ))}

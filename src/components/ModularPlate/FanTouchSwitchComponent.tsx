@@ -14,11 +14,7 @@ export const FanTouchSwitchComponent: React.FC = () => {
 
   return (
     <div
-      className="w-full h-full rounded-xl relative shadow-md flex flex-col items-center justify-center gap-3"
-      style={{
-        // background: "#f9fafb", // soft panel color
-        color: "#00faff",
-      }}
+      className="w-full h-full rounded-xl relative shadow-md flex flex-col items-center justify-center gap-3 text-cyan-500"
     >
       {/* Up arrow button */}
       <button
@@ -32,7 +28,7 @@ export const FanTouchSwitchComponent: React.FC = () => {
       </button>
 
       {/* Fan icon */}
-      <div className="text-2xl text-blue-500">🌀</div>
+      <div className="text-2xl text-cyan-500">🌀</div>
 
       {/* Down arrow button */}
       <button
