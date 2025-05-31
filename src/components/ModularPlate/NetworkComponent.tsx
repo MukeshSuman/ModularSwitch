@@ -17,8 +17,7 @@ export const NetworkComponent: React.FC = () => {
           height="16"
           rx="2"
           stroke="#06b6d4"
-          strokeWidth="2"
-        //   fill="#fff"
+          strokeWidth="1"
         />
         <rect
           x="13"
@@ -27,8 +26,7 @@ export const NetworkComponent: React.FC = () => {
           height="4"
           rx="1"
           stroke="#06b6d4"
-          strokeWidth="1.5"
-        //   fill="#e0f2fe"
+          strokeWidth="1"
         />
         <rect x="15" y="20" width="2" height="2" rx="0.5" fill="#38bdf8" />
       </svg>

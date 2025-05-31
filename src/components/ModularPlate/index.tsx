@@ -80,17 +80,23 @@ const componentItems: ComponentItem[] = [
     label: "Fan Regulator",
     component: <FanRegulatorComponent />,
   },
+    {
+    type: "TV",
+    size: "1M",
+    label: "TV Socket",
+    component: <TVSocketComponent />,
+  },
+    {
+    type: "Network",
+    size: "1M",
+    label: "Network/RJ45 Socket",
+    component: <NetworkComponent />,
+  },
   {
     type: "Socket",
     size: "2M",
     label: "Socket",
     component: <SocketComponent />,
-  },
-  {
-    type: "Network",
-    size: "1M",
-    label: "Network/RJ45 Socket",
-    component: <NetworkComponent />,
   },
   {
     type: "4GangTouch",
@@ -121,13 +127,7 @@ const componentItems: ComponentItem[] = [
     size: "2M",
     label: "Door Bell",
     component: <DoorBellTouchComponent />,
-  },
-  {
-    type: "TV",
-    size: "1M",
-    label: "TV Socket",
-    component: <TVSocketComponent />,
-  },
+  }
 ];
 
 export default function ModularPlate() {
