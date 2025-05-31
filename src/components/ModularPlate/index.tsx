@@ -244,6 +244,9 @@ export default function ModularPlate() {
           className="flex flex-col items-center flex-shrink-0"
           style={{ flexBasis: "35%", maxWidth: "35%" }}
         >
+          <h3 className="text-sm text-gray-500 mb-4">
+            Switch/Socket Components
+          </h3>
           <div className="mb-4 flex gap-2">
             <button
               className={`px-3 py-1 rounded ${previewMode === "real" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
@@ -258,6 +261,7 @@ export default function ModularPlate() {
               Text View
             </button>
           </div>
+
           {previewMode === "real" ? (
             <div className="flex justify-center gap-8 flex-wrap mb-8">
               {componentItems.map((item, i) => (
@@ -293,6 +297,9 @@ export default function ModularPlate() {
           className="bg-gray-100 p-8 rounded-3xl"
           style={{ minWidth: "fit-content" }}
         >
+          <h3 className="text-sm text-gray-500 mb-4" contentEditable>
+            Modular Plate
+          </h3>
           <div
             className="grid gap-2 bg-white p-4 rounded-3xl shadow-xl mx-auto"
             style={{ gridTemplateColumns: `repeat(${cols}, 4.4cm)` }}
