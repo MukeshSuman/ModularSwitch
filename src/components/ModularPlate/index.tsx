@@ -80,13 +80,13 @@ const componentItems: ComponentItem[] = [
     label: "Fan Regulator",
     component: <FanRegulatorComponent />,
   },
-    {
+  {
     type: "TV",
     size: "1M",
     label: "TV Socket",
     component: <TVSocketComponent />,
   },
-    {
+  {
     type: "Network",
     size: "1M",
     label: "Network/RJ45 Socket",
@@ -127,58 +127,73 @@ const componentItems: ComponentItem[] = [
     size: "2M",
     label: "Door Bell",
     component: <DoorBellTouchComponent />,
-  }
+  },
 ];
 
 export default function ModularPlate() {
   const [plateSize, setPlateSize] = useState<keyof typeof plateConfigs>("8H");
-  const [slots, setSlots] = useState<SlotData[]>(() => {
+  const [plates, setPlates] = useState<{
+    name: string;
+    slots: SlotData[];
+    size: keyof typeof plateConfigs;
+  }[]>(() => {
     const { cols, rows } = plateConfigs["8H"];
-    return Array(cols * rows)
-      .fill(null)
-      .map(() => ({
-        left: null,
-        right: null,
-        full: null,
-      }));
+    return [
+      {
+        name: "Plate 1",
+        slots: Array.from({ length: cols * rows }, () => ({ left: null, right: null, full: null })) as SlotData[],
+        size: "8H" as keyof typeof plateConfigs,
+      },
+    ];
   });
   const [previewMode, setPreviewMode] = useState<"real" | "text">("real");
+  const [editingPlateIdx, setEditingPlateIdx] = useState<number | null>(null);
+  const [editingPlateName, setEditingPlateName] = useState<string>("");
+  const [draggedPlateIdx, setDraggedPlateIdx] = useState<number | null>(null);
+  const [dragOverPlateIdx, setDragOverPlateIdx] = useState<number | null>(null);
 
   const handlePlateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const key = e.target.value as keyof typeof plateConfigs;
-    const { cols, rows } = plateConfigs[key];
     setPlateSize(key);
-    setSlots(
-      Array(cols * rows)
-        .fill(null)
-        .map(() => ({
-          left: null,
-          right: null,
-          full: null,
-        }))
+    setPlates((prev) =>
+      prev.map((plate) => {
+        const { cols, rows } = plateConfigs[key];
+        return {
+          ...plate,
+          size: key,
+          slots: Array.from({ length: cols * rows }, () => ({ left: null, right: null, full: null })) as SlotData[],
+        };
+      })
     );
   };
 
   const handleDrop = (
+    plateIdx: number,
     index: number,
     half: "left" | "right" | "full",
     item: ItemData
   ) => {
-    setSlots((prev) => {
-      const newSlots = [...prev];
-      const current = newSlots[index];
-
+    setPlates((prev) => {
+      const newPlates = [...prev];
+      const plate = { ...newPlates[plateIdx] };
+      const newSlots: SlotData[] = [...plate.slots];
+      const current = newSlots[index] ?? { left: null, right: null, full: null };
       if (item.size === "2M" && half === "full") {
         if (!current.full && !current.left && !current.right) {
           newSlots[index] = { full: item, left: null, right: null };
         }
       } else if (item.size === "1M" && (half === "left" || half === "right")) {
         if (!current.full && !current[half]) {
-          newSlots[index] = { ...current, [half]: item };
+          newSlots[index] = {
+            left: half === "left" ? item : null,
+            right: half === "right" ? item : null,
+            full: null,
+          };
         }
       }
-
-      return newSlots;
+      plate.slots = newSlots;
+      newPlates[plateIdx] = plate;
+      return newPlates;
     });
   };
 
@@ -189,35 +204,62 @@ export default function ModularPlate() {
     return match?.component || null;
   };
 
-  const dragStart = (e: React.DragEvent, item: ItemData) => {
+  const dragStart = (
+    e: React.DragEvent,
+    item: ItemData,
+    plateIdx?: number,
+    slotIdx?: number,
+    half?: "left" | "right" | "full"
+  ) => {
     e.dataTransfer.setData("type", item.type);
     e.dataTransfer.setData("size", item.size);
+    if (plateIdx !== undefined) e.dataTransfer.setData("plateIdx", plateIdx.toString());
+    if (slotIdx !== undefined) e.dataTransfer.setData("index", slotIdx.toString());
+    if (half) e.dataTransfer.setData("half", half);
   };
 
-  const cols = plateConfigs[plateSize].cols;
+  const addPlate = () => {
+    const { cols, rows } = plateConfigs[plateSize];
+    setPlates((prev) => [
+      ...prev,
+      {
+        name: `Plate ${prev.length + 1}`,
+        slots: Array.from({ length: cols * rows }, () => ({ left: null, right: null, full: null })) as SlotData[],
+        size: plateSize,
+      },
+    ]);
+  };
 
-  const groupIntoRows = (items: ComponentItem[]): ComponentItem[][] => {
-    const rows: ComponentItem[][] = [];
-    let currentRow: ComponentItem[] = [];
-    let currentWidth = 0;
-
-    for (const item of items) {
-      const size = item.size === "2M" ? 2 : 1;
-      if (currentWidth + size > 4) {
-        rows.push(currentRow);
-        currentRow = [item];
-        currentWidth = size;
-      } else {
-        currentRow.push(item);
-        currentWidth += size;
+  const handleDeletePlate = (plateIdx: number) => {
+    if (plates.length > 1) {
+      if (window.confirm('Are you sure you want to delete this plate?')) {
+        setPlates((prev) => prev.filter((_, idx) => idx !== plateIdx));
       }
     }
-
-    if (currentRow.length > 0) rows.push(currentRow);
-    return rows;
   };
 
-  const groupedRows = groupIntoRows(componentItems);
+  const handleStartEditName = (plateIdx: number, currentName: string) => {
+    setEditingPlateIdx(plateIdx);
+    setEditingPlateName(currentName);
+  };
+
+  const handleSavePlateName = (plateIdx: number) => {
+    setPlates((prev) => prev.map((plate, idx) => idx === plateIdx ? { ...plate, name: editingPlateName } : plate));
+    setEditingPlateIdx(null);
+    setEditingPlateName("");
+  };
+
+  const handlePlateSizeChange = (plateIdx: number, newSize: keyof typeof plateConfigs) => {
+    const { cols, rows } = plateConfigs[newSize];
+    setPlates((prev) => prev.map((plate, idx) => idx === plateIdx
+      ? {
+          ...plate,
+          size: newSize,
+          slots: Array.from({ length: cols * rows }, () => ({ left: null, right: null, full: null })) as SlotData[],
+        }
+      : plate
+    ));
+  };
 
   return (
     <div className="text-center bg-[#d9d9d9] font-sans p-[1cm] min-h-screen">
@@ -249,13 +291,21 @@ export default function ModularPlate() {
           </h3>
           <div className="mb-4 flex gap-2">
             <button
-              className={`px-3 py-1 rounded ${previewMode === "real" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              className={`px-3 py-1 rounded ${
+                previewMode === "real"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
+              }`}
               onClick={() => setPreviewMode("real")}
             >
               Real View
             </button>
             <button
-              className={`px-3 py-1 rounded ${previewMode === "text" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+              className={`px-3 py-1 rounded ${
+                previewMode === "text"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200"
+              }`}
               onClick={() => setPreviewMode("text")}
             >
               Text View
@@ -268,7 +318,9 @@ export default function ModularPlate() {
                 <div
                   key={i}
                   className={`border border-gray-500 rounded-lg shadow cursor-grab flex items-center justify-center ${
-                    item.size === "2M" ? "w-[4.4cm] h-[4.5cm]" : "w-[2.2cm] h-[4.5cm]"
+                    item.size === "2M"
+                      ? "w-[4.4cm] h-[4.5cm]"
+                      : "w-[2.2cm] h-[4.5cm]"
                   }`}
                   draggable
                   onDragStart={(e) => dragStart(e, item)}
@@ -292,98 +344,178 @@ export default function ModularPlate() {
             </div>
           )}
         </div>
-        {/* Right: Modular Plate */}
+        {/* Right: Modular Plates */}
         <div
           className="bg-gray-100 p-8 rounded-3xl"
           style={{ minWidth: "fit-content" }}
         >
-          <h3 className="text-sm text-gray-500 mb-4" contentEditable>
-            Modular Plate
-          </h3>
-          <div
-            className="grid gap-2 bg-white p-4 rounded-3xl shadow-xl mx-auto"
-            style={{ gridTemplateColumns: `repeat(${cols}, 4.4cm)` }}
-          >
-            {slots.map((slot, index) => (
+          {plates.map((plate, plateIdx) => {
+            const cols = plateConfigs[plate.size].cols;
+            return (
               <div
-                key={index}
-                className="relative w-[4.4cm] h-[4.5cm] bg-gray-50 border border-gray-300 rounded-xl flex flex-row justify-between"
+                key={plateIdx}
+                className={`mb-12 transition-all duration-200 ${dragOverPlateIdx === plateIdx ? 'ring-4 ring-blue-400' : ''}`}
+                draggable
+                onDragStart={() => setDraggedPlateIdx(plateIdx)}
+                onDragOver={e => {
+                  e.preventDefault();
+                  if (draggedPlateIdx !== null && draggedPlateIdx !== plateIdx) setDragOverPlateIdx(plateIdx);
+                }}
+                onDragLeave={() => setDragOverPlateIdx(null)}
+                onDrop={() => {
+                  if (draggedPlateIdx !== null && draggedPlateIdx !== plateIdx) {
+                    setPlates(prev => {
+                      const newPlates = [...prev];
+                      const [removed] = newPlates.splice(draggedPlateIdx, 1);
+                      newPlates.splice(plateIdx, 0, removed);
+                      return newPlates;
+                    });
+                  }
+                  setDragOverPlateIdx(null);
+                  setDraggedPlateIdx(null);
+                }}
+                onDragEnd={() => {
+                  setDragOverPlateIdx(null);
+                  setDraggedPlateIdx(null);
+                }}
               >
-                {slot.full ? (
-                  <div
-                    className="absolute w-full h-full bg-gray-100 rounded-xl flex items-center justify-center cursor-grab z-10"
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("index", index.toString());
-                      e.dataTransfer.setData("half", "full");
-                    }}
+                <div className="mt-4 mb-4 flex items-center justify-center gap-4">
+                  {/* Plate name editing */}
+                  {editingPlateIdx === plateIdx ? (
+                    <input
+                      className="text-2xl font-bold text-center border-b border-gray-400 bg-white px-2 py-1 w-48"
+                      value={editingPlateName}
+                      onChange={e => setEditingPlateName(e.target.value)}
+                      onBlur={() => handleSavePlateName(plateIdx)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleSavePlateName(plateIdx); }}
+                      autoFocus
+                    />
+                  ) : (
+                    <span
+                      className="text-2xl font-bold cursor-pointer hover:underline"
+                      onClick={() => handleStartEditName(plateIdx, plate.name)}
+                    >
+                      {plate.name}
+                    </span>
+                  )}
+                  {/* Plate size select */}
+                  <select
+                    className="ml-2 px-2 py-1 rounded border text-base"
+                    value={plate.size}
+                    onChange={e => handlePlateSizeChange(plateIdx, e.target.value as keyof typeof plateConfigs)}
                   >
-                    {renderItem(slot.full)}
-                  </div>
-                ) : (
-                  <>
-                    {(["left", "right"] as const).map((side) => (
-                      <div
-                        key={side}
-                        className={`w-1/2 h-full flex items-center justify-center relative ${
-                          side === "left"
-                            ? "border-r border-gray-200"
-                            : "border-l border-gray-200"
-                        }`}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => {
-                          const type = e.dataTransfer.getData(
-                            "type"
-                          ) as ComponentType;
-                          const size = e.dataTransfer.getData("size") as
-                            | "1M"
-                            | "2M";
-                          if (size === "1M") {
-                            handleDrop(index, side, { type, size });
-                          } else if (size === "2M") {
-                            handleDrop(index, "full", { type, size });
-                          }
-                        }}
-                      >
+                    {Object.keys(plateConfigs).map((key) => (
+                      <option key={key} value={key}>
+                        {key.includes("H") ? "Horizontal" : "Vertical"} {key} (
+                        {plateConfigs[key].cols} × {plateConfigs[key].rows})
+                      </option>
+                    ))}
+                  </select>
+                  {/* Delete plate button */}
+                  <button
+                    className="ml-2 px-2 py-1 rounded bg-red-500 text-white font-bold hover:bg-red-600 disabled:opacity-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeletePlate(plateIdx);
+                    }}
+                    disabled={plates.length === 1}
+                    title={plates.length === 1 ? 'At least one plate required' : 'Delete plate'}
+                  >
+                    🗑️
+                  </button>
+                </div>
+                <div
+                  className="grid gap-2 bg-white p-4 rounded-3xl shadow-xl mx-auto"
+                  style={{ gridTemplateColumns: `repeat(${cols}, 4.4cm)` }}
+                >
+                  {plate.slots.map((slot, index) => (
+                    <div
+                      key={index}
+                      className="relative w-[4.4cm] h-[4.5cm] bg-gray-50 border border-gray-300 rounded-xl flex flex-row justify-between"
+                    >
+                      {slot.full ? (
                         <div
-                          className="w-full h-full flex items-center justify-center cursor-grab"
-                          draggable={!!slot[side]}
+                          className="absolute w-full h-full bg-gray-100 rounded-xl flex items-center justify-center cursor-grab z-10"
+                          draggable
                           onDragStart={(e) => {
-                            e.dataTransfer.setData("index", index.toString());
-                            e.dataTransfer.setData("half", side);
+                            dragStart(e, slot.full!, plateIdx, index, "full");
                           }}
                         >
-                          {slot[side] && renderItem(slot[side]!)}
+                          {renderItem(slot.full)}
                         </div>
-                      </div>
-                    ))}
-                  </>
-                )}
+                      ) : (
+                        <>
+                          {(["left", "right"] as const).map((side) => (
+                            <div
+                              key={side}
+                              className={`w-1/2 h-full flex items-center justify-center relative ${
+                                side === "left"
+                                  ? "border-r border-gray-200"
+                                  : "border-l border-gray-200"
+                              }`}
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                const type = e.dataTransfer.getData("type") as ComponentType;
+                                const size = e.dataTransfer.getData("size") as "1M" | "2M";
+                                if (size === "1M") {
+                                  handleDrop(plateIdx, index, side, { type, size });
+                                } else if (size === "2M") {
+                                  handleDrop(plateIdx, index, "full", { type, size });
+                                }
+                              }}
+                            >
+                              <div
+                                className="w-full h-full flex items-center justify-center cursor-grab"
+                                draggable={!!slot[side]}
+                                onDragStart={(e) => {
+                                  if (slot[side]) {
+                                    dragStart(e, slot[side]!, plateIdx, index, side);
+                                  }
+                                }}
+                              >
+                                {slot[side] && renderItem(slot[side]!)}
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            );
+          })}
+          <div className="mt-4 mb-4">
+            <button
+              className="px-6 py-2 rounded bg-green-500 text-white font-bold hover:bg-green-600"
+              onClick={addPlate}
+            >
+              + Add More Plate
+            </button>
+          </div>
+          {/* Trash Area */}
+          <div
+            className="mt-8 p-4 border-2 border-dashed border-gray-500 bg-white text-gray-800 font-bold text-center rounded-lg w-[300px] mx-auto hover:bg-red-100 transition-all duration-300"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              const plateIdx = parseInt(e.dataTransfer.getData("plateIdx"));
+              const index = parseInt(e.dataTransfer.getData("index"));
+              const half = e.dataTransfer.getData("half") as "left" | "right" | "full";
+              setPlates((prev) => {
+                const newPlates = [...prev];
+                const plate = { ...newPlates[plateIdx] };
+                const newSlots: SlotData[] = [...plate.slots];
+                if (half === "full") newSlots[index].full = null;
+                else newSlots[index][half] = null;
+                plate.slots = newSlots;
+                newPlates[plateIdx] = plate;
+                return newPlates;
+              });
+            }}
+          >
+            🗑️ Drag here to remove
           </div>
         </div>
-      </div>
-
-      {/* Trash Area */}
-      <div
-        className="mt-8 p-4 border-2 border-dashed border-gray-500 bg-white text-gray-800 font-bold text-center rounded-lg w-[300px] mx-auto hover:bg-red-100 transition-all duration-300"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          const index = parseInt(e.dataTransfer.getData("index"));
-          const half = e.dataTransfer.getData("half") as
-            | "left"
-            | "right"
-            | "full";
-          setSlots((prev) => {
-            const newSlots = [...prev];
-            if (half === "full") newSlots[index].full = null;
-            else newSlots[index][half] = null;
-            return newSlots;
-          });
-        }}
-      >
-        🗑️ Drag here to remove
       </div>
     </div>
   );
