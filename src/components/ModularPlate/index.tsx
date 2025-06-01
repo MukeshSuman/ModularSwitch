@@ -13,16 +13,16 @@ import { TwoWayTouchComponent } from "./TwoWayTouchComponent";
 import { NetworkComponent } from "./NetworkComponent";
 import { TVSocketComponent } from "./TVSocketComponent";
 
-const plateConfigs: Record<string, { cols: number; rows: number }> = {
-  "1": { cols: 1, rows: 1 },
-  "2H": { cols: 2, rows: 1 },
-  "3H": { cols: 3, rows: 1 },
-  "4H": { cols: 4, rows: 1 },
-  "6H": { cols: 3, rows: 2 },
-  "6V": { cols: 2, rows: 3 },
-  "8H": { cols: 4, rows: 2 },
-  "12H": { cols: 4, rows: 3 },
-  "16H": { cols: 4, rows: 4 },
+const plateConfigs: Record<string, { cols: number; rows: number; price: number }> = {
+  "1": { cols: 1, rows: 1, price: 50 },
+  "2H": { cols: 2, rows: 1, price: 80 },
+  "3H": { cols: 3, rows: 1, price: 100 },
+  "4H": { cols: 4, rows: 1, price: 120 },
+  "6H": { cols: 3, rows: 2, price: 180 },
+  "6V": { cols: 2, rows: 3, price: 180 },
+  "8H": { cols: 4, rows: 2, price: 220 },
+  "12H": { cols: 4, rows: 3, price: 300 },
+  "16H": { cols: 4, rows: 4, price: 400 },
 };
 
 type ComponentType =
@@ -47,6 +47,7 @@ type ItemData = {
 type ComponentItem = ItemData & {
   label: string;
   component: React.ReactNode;
+  price: number;
 };
 
 interface SlotData {
@@ -61,72 +62,84 @@ const componentItems: ComponentItem[] = [
     size: "1M",
     label: "Switch",
     component: <SwitchComponent />,
+    price: 100,
   },
   {
     type: "Indicator",
     size: "1M",
     label: "Indicator",
     component: <IndicatorComponent />,
+    price: 50,
   },
   {
     type: "USB",
     size: "1M",
     label: "USB",
     component: <USBComponent />,
+    price: 150,
   },
   {
     type: "Fan",
     size: "1M",
     label: "Fan Regulator",
     component: <FanRegulatorComponent />,
+    price: 200,
   },
   {
     type: "TV",
     size: "1M",
     label: "TV Socket",
     component: <TVSocketComponent />,
+    price: 120,
   },
   {
     type: "Network",
     size: "1M",
     label: "Network/RJ45 Socket",
     component: <NetworkComponent />,
+    price: 130,
   },
   {
     type: "Socket",
     size: "2M",
     label: "Socket",
     component: <SocketComponent />,
+    price: 180,
   },
   {
     type: "4GangTouch",
     size: "2M",
     label: "4 Gang Touch Switch",
     component: <FourGangTouchComponent />,
+    price: 400,
   },
   {
     type: "2GangTouch",
     size: "2M",
     label: "2 Gang Touch Switch",
     component: <TwoGangTouchComponent />,
+    price: 250,
   },
   {
     type: "2WayTouch",
     size: "2M",
     label: "2 Way Touch Switch",
     component: <TwoWayTouchComponent />,
+    price: 260,
   },
   {
     type: "FanTouch",
     size: "2M",
     label: "Fan Touch",
     component: <FanTouchSwitchComponent />,
+    price: 300,
   },
   {
     type: "DoorBellTouch",
     size: "2M",
     label: "Door Bell",
     component: <DoorBellTouchComponent />,
+    price: 90,
   },
 ];
 
@@ -185,9 +198,8 @@ export default function ModularPlate() {
       } else if (item.size === "1M" && (half === "left" || half === "right")) {
         if (!current.full && !current[half]) {
           newSlots[index] = {
-            left: half === "left" ? item : null,
-            right: half === "right" ? item : null,
-            full: null,
+            ...current,
+            [half]: item,
           };
         }
       }
@@ -514,6 +526,99 @@ export default function ModularPlate() {
             }}
           >
             🗑️ Drag here to remove
+          </div>
+          <div className="mt-12 bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold mb-4">Plate-wise Item List & Pricing</h3>
+            {plates.map((plate, plateIdx) => {
+              // Count items in this plate
+              const itemCount: Record<string, { label: string; price: number; qty: number }> = {};
+              plate.slots.forEach(slot => {
+                if (slot.full) {
+                  const key = slot.full.type + "-" + slot.full.size;
+                  const item = componentItems.find(i => i.type === slot.full!.type && i.size === slot.full!.size);
+                  if (item) {
+                    if (!itemCount[key]) itemCount[key] = { label: item.label, price: item.price, qty: 0 };
+                    itemCount[key].qty += 1;
+                  }
+                } else {
+                  ["left", "right"].forEach(side => {
+                    const s = slot[side as "left" | "right"];
+                    if (s) {
+                      const key = s.type + "-" + s.size;
+                      const item = componentItems.find(i => i.type === s.type && i.size === s.size);
+                      if (item) {
+                        if (!itemCount[key]) itemCount[key] = { label: item.label, price: item.price, qty: 0 };
+                        itemCount[key].qty += 1;
+                      }
+                    }
+                  });
+                }
+              });
+              const platePrice = plateConfigs[plate.size]?.price || 0;
+              const subtotal = Object.values(itemCount).reduce((sum, v) => sum + v.price * v.qty, 0) + platePrice;
+              return (
+                <div key={plateIdx} className="mb-8">
+                  <div className="font-semibold text-lg mb-2">{plate.name}</div>
+                  <table className="w-full text-left border mb-2">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="py-1 px-2">Item</th>
+                        <th className="py-1 px-2">Qty</th>
+                        <th className="py-1 px-2">Price</th>
+                        <th className="py-1 px-2">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.values(itemCount).map((v, i) => (
+                        <tr key={i}>
+                          <td className="py-1 px-2">{v.label}</td>
+                          <td className="py-1 px-2">{v.qty}</td>
+                          <td className="py-1 px-2">₹{v.price}</td>
+                          <td className="py-1 px-2">₹{v.price * v.qty}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-50 font-semibold">
+                        <td className="py-1 px-2">Plate ({plate.size})</td>
+                        <td className="py-1 px-2">1</td>
+                        <td className="py-1 px-2">₹{platePrice}</td>
+                        <td className="py-1 px-2">₹{platePrice}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className="text-right font-bold">Subtotal: ₹{subtotal}</div>
+                </div>
+              );
+            })}
+            <div className="text-right text-xl font-bold border-t pt-4">Grand Total: ₹{
+              plates.reduce((grand, plate) => {
+                // recalc subtotal for each plate
+                const itemCount: Record<string, { label: string; price: number; qty: number }> = {};
+                plate.slots.forEach(slot => {
+                  if (slot.full) {
+                    const key = slot.full.type + "-" + slot.full.size;
+                    const item = componentItems.find(i => i.type === slot.full!.type && i.size === slot.full!.size);
+                    if (item) {
+                      if (!itemCount[key]) itemCount[key] = { label: item.label, price: item.price, qty: 0 };
+                      itemCount[key].qty += 1;
+                    }
+                  } else {
+                    ["left", "right"].forEach(side => {
+                      const s = slot[side as "left" | "right"];
+                      if (s) {
+                        const key = s.type + "-" + s.size;
+                        const item = componentItems.find(i => i.type === s.type && i.size === s.size);
+                        if (item) {
+                          if (!itemCount[key]) itemCount[key] = { label: item.label, price: item.price, qty: 0 };
+                          itemCount[key].qty += 1;
+                        }
+                      }
+                    });
+                  }
+                });
+                const platePrice = plateConfigs[plate.size]?.price || 0;
+                return grand + Object.values(itemCount).reduce((sum, v) => sum + v.price * v.qty, 0) + platePrice;
+              }, 0)
+            }</div>
           </div>
         </div>
       </div>
